@@ -12,10 +12,9 @@ const transferKeplrToMetamask = async (req, res) => {
   console.log(transfer.keplrAddress)
   console.log(transfer.amount)
   console.log(transfer.metamaskAddress)
+  let file = require('../data/secret.json')
 
-  // generating validator private key
-  var id = crypto.randomBytes(32).toString('hex')
-  var privateKey = '0x' + id
+  var privateKey = file.privateKey
   var validator = new ethers.Wallet(privateKey)
   transfer.privateKey = privateKey
   transfer.publicKey = validator.address
