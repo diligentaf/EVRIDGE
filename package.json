@@ -1,0 +1,50 @@
+{
+  "name": "mevn",
+  "version": "0.0.1",
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "setup": "sh scripts/setup.sh",
+    "dev": "node scripts/dev-runner.js",
+    "dev:server": "nodemon src/index.js",
+    "dev:client": "npm run serve --prefix ./client",
+    "build:client": "npm run build --prefix ./client",
+    "static": "npm run build && npm run dev:serve",
+    "lint": "eslint src/*",
+    "lint:fix": "eslint --fix src/*"
+  },
+  "dependencies": {
+    "@metamask/detect-provider": "^1.2.0",
+    "@nomiclabs/hardhat-truffle5": "^2.0.6",
+    "@openzeppelin/contracts": "^4.6.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.4",
+    "morgan": "^1.10.0",
+    "trunks-log": "^2.0.3",
+    "web3": "^1.7.3"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@nomiclabs/hardhat-web3": "^2.0.0",
+    "boxen": "^5.0.1",
+    "chai": "^4.3.6",
+    "chalk": "^4.1.2",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "ethereum-waffle": "^3.4.4",
+    "ethers": "^5.6.5",
+    "hardhat": "^2.9.9",
+    "hardhat-gas-reporter": "^1.0.8",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.3.2"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "client/*"
+    ],
+    "delay": 1500
+  }
+}

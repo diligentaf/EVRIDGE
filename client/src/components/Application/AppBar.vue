@@ -1,0 +1,156 @@
+<template>
+  <div>
+    <v-progress-linear
+      fixed
+      v-if="loading"
+      color="primary"
+      indeterminate
+      class="elevation-25"
+      style="z-index: 6"
+    />
+
+    <v-app-bar app clipped-left color="#FCE4EC" class="bright--text">
+      <div class="d-flex align-center">
+        <h1>🪐CosMeta🦊</h1>
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        class="bright--text mr-3"
+        @click="$vuetify.theme.dark = !$vuetify.theme.dark"
+        icon
+        depressed
+      >
+        <v-icon>
+          {{
+            !$vuetify.theme.dark
+              ? 'mdi-weather-sunny'
+              : 'mdi-moon-waxing-crescent'
+          }}
+        </v-icon>
+      </v-btn>
+      <v-btn
+        v-if="client == '' || client == undefined"
+        icon
+        depressed
+        tag="a"
+        class="bright--text"
+        target="blank"
+        @click="connectWallet"
+      >
+        <v-icon>mdi-wallet</v-icon>
+      </v-btn>
+      <v-btn
+        v-else
+        depressed
+        color="primary"
+        tag="a"
+        class="bright--text"
+        target="blank"
+      >
+        {{ client }}
+      </v-btn>
+    </v-app-bar>
+  </div>
+</template>
+
+<script>
+import web3 from 'web3'
+export default {
+  name: 'AppBar',
+
+  data: () => ({
+    client: undefined,
+  }),
+
+  methods: {
+    async connectWallet() {
+      if (
+        typeof window.ethereum !== 'undefined' &&
+        window.ethereum.isMetaMask
+      ) {
+        await window.ethereum
+          .request({ method: 'eth_requestAccounts' })
+          .then(this.handleAccountsChanged)
+          .catch((err) => {
+            if (err.code === 4001) {
+              console.log(err.message)
+            } else {
+              console.error(err)
+            }
+          })
+      } else {
+        alert('please install MetaMask')
+      }
+    },
+    handleAccountsChanged(accounts) {
+      this.client = accounts[0]
+      localStorage.setItem('client', this.client)
+      this.changeNetwork()
+    },
+    async changeNetwork() {
+      // const chainId = 80001 // Polygon Mumbai Testnet
+      const chainId = 97 // BSC Testnet
+
+      if (window.ethereum.networkVersion !== chainId) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: web3.utils.toHex(chainId) }],
+          })
+        } catch (err) {
+          // This error code indicates that the chain has not been added to MetaMask
+          if (err.code === 4902) {
+            // await window.ethereum.request({
+            //   method: 'wallet_addEthereumChain',
+            //   params: [
+            //     {
+            //       chainName: 'Mumbai - Testnet',
+            //       chainId: web3.utils.toHex(chainId),
+            //       nativeCurrency: {
+            //         name: 'MATIC',
+            //         decimals: 18,
+            //         symbol: 'MATIC',
+            //       },
+            //       rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
+            //     },
+            //   ],
+            // })
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainName: 'BSC - Testnet',
+                  chainId: web3.utils.toHex(chainId),
+                  nativeCurrency: {
+                    name: 'BSC',
+                    decimals: 18,
+                    symbol: 'BSC',
+                  },
+                  rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+                },
+              ],
+            })
+          }
+        }
+      }
+
+    },
+    checkConnection() {
+      window.ethereum
+        .request({ method: 'eth_accounts' })
+        .then(this.handleAccountsChanged)
+        .catch(console.error)
+    },
+  },
+  mounted() {
+    this.checkConnection()
+  },
+  computed: {
+    loading() {
+      return this.$store.getters.loading
+    },
+  },
+}
+</script>

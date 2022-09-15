@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../solidity/LinkDrop"
+		}
+	],
+	"settings": {
+		"nuxt.isNuxtApp": false
+	}
+}
