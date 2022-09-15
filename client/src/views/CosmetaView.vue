@@ -20,7 +20,7 @@
         <v-card-text>
           <v-form>
             <v-text-field v-model="keplrAddress" label="Your Keplr Address" />
-            <v-text-field v-model="amount" label="amount" />
+            <v-text-field type="text" v-model="amount" label="amount" />
             👇 👇 👇 👇
             <br>
             <v-text-field v-model="metamaskAddress" label="Your Metamask Address" />
@@ -41,6 +41,8 @@
 <script>
 import { loadingStates } from '../mixins/loading-state'
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { Decimal } from "@cosmjs/math"
+import { Bech32Address } from "@keplr-wallet/cosmos"
 import axios from 'axios'
 
 export default {
@@ -54,15 +56,131 @@ export default {
     keplrAddress: '',
     metamaskAddress: '0x8Affd961D6CfAE4988BE9E935Ac20873D466444e',
     amount: '',
+    CosmWasmClient: {},
+    ChainInfo: {},
   }),
 
   methods: {
     async submit() {
+      this.amount = String(this.amount)
       if (this.metamaskAddress.length !== 42) {
         alert('please insert a proper address')
         return
       }
-      this.transferKeplrToMetamask()
+      await this.transferToBridgeWallet()
+      await this.transferKeplrToMetamask()
+    },
+    async transferToBridgeWallet() {
+
+      this.ChainInfo = {
+        rpc: "https://rpc-osmosis.blockapsis.com",
+        rest: "https://lcd-osmosis.blockapsis.com",
+        chainId: "osmosis-1",
+        chainName: "Osmosis",
+        stakeCurrency: {
+          coinDenom: "OSMO",
+          coinMinimalDenom: "uosmo",
+          coinDecimals: 6,
+          coinGeckoId: "osmosis",
+          coinImageUrl: window.location.origin + "/public/assets/tokens/osmosis.svg",
+        },
+        bip44: {
+          coinType: 118,
+        },
+        bech32Config: Bech32Address.defaultBech32Config("osmo"),
+        currencies: [
+          {
+            coinDenom: "OSMO",
+            coinMinimalDenom: "uosmo",
+            coinDecimals: 6,
+            coinGeckoId: "osmosis",
+            coinImageUrl:
+              window.location.origin + "/public/assets/tokens/osmosis.svg",
+          },
+        ],
+        feeCurrencies: [
+          {
+            coinDenom: "OSMO",
+            coinMinimalDenom: "uosmo",
+            coinDecimals: 6,
+            coinGeckoId: "osmosis",
+            coinImageUrl:
+              window.location.origin + "/public/assets/tokens/osmosis.svg",
+          },
+        ],
+        features: ["stargate", "ibc-transfer", "no-legacy-stdTx", "ibc-go"],
+        explorerUrlToTx: "https://www.mintscan.io/osmosis/txs/{txHash}",
+      }
+
+      let accounts, queryHandler 
+
+      if (window["keplr"]) {
+        if (window.keplr["experimentalSuggestChain"]) {
+          await window.keplr.experimentalSuggestChain(this.ChainInfo)
+          await window.keplr.enable(this.ChainInfo.chainId)
+          const offlineSigner = await window.getOfflineSigner(this.ChainInfo.chainId)
+          this.CosmWasmClient = await SigningCosmWasmClient.connectWithSigner(
+            this.ChainInfo.rpc,
+            offlineSigner,
+            {
+              gasPrice: {
+                amount: Decimal.fromAtomics("1000", 4),
+                denom: this.ChainInfo.currencies[0].coinMinimalDenom,
+              },
+            },
+          )
+
+          accounts = await offlineSigner.getAccounts()
+
+          queryHandler = this.CosmWasmClient.queryClient.wasm.queryContractSmart
+          // Gas price
+          // gasPrice = GasPrice.fromString("0.002uconst")
+
+          console.log("Wallet connected", {
+            offlineSigner: offlineSigner,
+            CosmWasmClient: this.CosmWasmClient,
+            accounts: accounts,
+            chain: this.ChainInfo,
+            queryHandler: queryHandler,
+            // gasPrice: gasPrice,
+          })
+
+
+          var recipientAddress = "osmo1y5n7xveuun4n0kwskdlj3gcuyhkdws55xraj5r"
+          var amount = String(Number(this.amount) * 10**6)
+          var memo = "transferring osmo to bridge"
+
+          this.sendTokensTo(recipientAddress, amount, memo)
+        } else {
+          console.warn(
+            "Error accessing experimental features, please update Keplr",
+          )
+        }
+      } else {
+        console.warn("Error accessing Keplr, please install Keplr")
+      }
+
+    },
+    async sendTokensTo(address, amount, memo) {
+      try {
+        let deliverTxResponse = await this.CosmWasmClient.sendTokens(
+          this.keplrAddress,
+          address,
+          [
+            {
+              denom: this.ChainInfo.currencies[0].coinMinimalDenom,
+              amount: amount,
+            },
+          ],
+          "auto",
+          memo,
+        )
+        console.log("Transaction Response", {
+          tx: deliverTxResponse,
+        })
+      } catch (e) {
+        console.warn("Error sending tokens", [e, address])
+      }
     },
     async transferKeplrToMetamask() {
       try {
@@ -71,18 +189,17 @@ export default {
           amount: this.amount,
           metamaskAddress: this.metamaskAddress,
         }
-      const http = axios.create({
-        // baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
-        baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
-      })
-      http.post('/transferKeplrToMetamask', newTransfer)
-      this.$emit('success', newTransfer)
+        const http = axios.create({
+          baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
+        })
+        http.post('/transferKeplrToMetamask', newTransfer)
+        this.$emit('success', newTransfer)
       } catch (error) {
         console.error(error)
-        // this.$emit('error', { error })
+        this.$emit('error', { error })
       }
     },
-    async connectKeplr() { 
+    async connectKeplr() {
       if (!window.keplr) {
         this.connectKeplr()
       } else {
@@ -104,9 +221,6 @@ export default {
     },
     async sendMoney() {
       console.log('sendGassFee')
-      // MOOG SendGasFee
-      // let gasPrice = await this.provider.getGasPrice()
-      // let currentGasPrice = parseInt(gasPrice._hex)
 
       let receiverAddress = this.publicKey
       let tx = {

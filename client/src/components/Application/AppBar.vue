@@ -90,8 +90,7 @@ export default {
       this.changeNetwork()
     },
     async changeNetwork() {
-      // const chainId = 80001 // Polygon Mumbai Testnet
-      const chainId = 97 // BSC Testnet
+      const chainId = 9001 // EVMOS Mainnet
 
       if (window.ethereum.networkVersion !== chainId) {
         try {
@@ -102,33 +101,18 @@ export default {
         } catch (err) {
           // This error code indicates that the chain has not been added to MetaMask
           if (err.code === 4902) {
-            // await window.ethereum.request({
-            //   method: 'wallet_addEthereumChain',
-            //   params: [
-            //     {
-            //       chainName: 'Mumbai - Testnet',
-            //       chainId: web3.utils.toHex(chainId),
-            //       nativeCurrency: {
-            //         name: 'MATIC',
-            //         decimals: 18,
-            //         symbol: 'MATIC',
-            //       },
-            //       rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
-            //     },
-            //   ],
-            // })
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
               params: [
                 {
-                  chainName: 'BSC - Testnet',
+                  chainName: 'Evmos',
                   chainId: web3.utils.toHex(chainId),
                   nativeCurrency: {
-                    name: 'BSC',
+                    name: 'EVMOS',
                     decimals: 18,
-                    symbol: 'BSC',
+                    symbol: 'EVMOS',
                   },
-                  rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+                  rpcUrls: ['https://eth.bd.evmos.org:8545/'],
                 },
               ],
             })
