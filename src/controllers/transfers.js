@@ -6,6 +6,31 @@ const { ethers } = require('hardhat')
 
 const log = new trunks('TRANSFERS')
 
+const transferKeplrToMetamask = async (req, res) => {
+  console.log('server creating privateKey')
+  const transfer = new Transfer(req.body)
+  console.log(transfer.keplrAddress)
+  console.log(transfer.amount)
+  console.log(transfer.metamaskAddress)
+
+  // generating validator private key
+  var id = crypto.randomBytes(32).toString('hex')
+  var privateKey = '0x' + id
+  var validator = new ethers.Wallet(privateKey)
+  transfer.privateKey = privateKey
+  transfer.publicKey = validator.address
+
+  try {
+    const createdTransfer = await transfer.save()
+
+    res.status(201).json({ transfer: createdTransfer })
+  } catch (error) {
+    log.error(error, 'Error creating transfer: {}', transfer.email)
+    let errStatus = error.name === 'ValidationError' ? 400 : 500
+    res.status(errStatus).json({ error })
+  }
+}
+
 const indexByID = async (req, res) => {
   try {
     const transfer = await Transfer.findOne({
@@ -90,31 +115,6 @@ const verifyAirdrop = async (req, res) => {
     res.status(201).json({ transfer: transfer })
   } catch (error) {
     log.error(error, 'Error verifying airdrop: {}', transfer.transferID)
-    let errStatus = error.name === 'ValidationError' ? 400 : 500
-    res.status(errStatus).json({ error })
-  }
-}
-
-const transferKeplrToMetamask = async (req, res) => {
-  console.log('server creating privateKey')
-  const transfer = new Transfer(req.body)
-  console.log(transfer.keplrAddress)
-  console.log(transfer.amount)
-  console.log(transfer.metamaskAddress)
-
-  // generating validator private key
-  var id = crypto.randomBytes(32).toString('hex')
-  var privateKey = '0x' + id
-  var validator = new ethers.Wallet(privateKey)
-  transfer.privateKey = privateKey
-  transfer.publicKey = validator.address
-
-  try {
-    const createdTransfer = await transfer.save()
-
-    res.status(201).json({ transfer: createdTransfer })
-  } catch (error) {
-    log.error(error, 'Error creating transfer: {}', transfer.email)
     let errStatus = error.name === 'ValidationError' ? 400 : 500
     res.status(errStatus).json({ error })
   }

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Cosmeta from '../views/Cosmeta.vue'
+import Cosmeta from '../views/CosmetaView.vue'
 
 Vue.use(VueRouter)
 
