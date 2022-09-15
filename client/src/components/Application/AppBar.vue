@@ -9,9 +9,15 @@
       style="z-index: 6"
     />
 
-    <v-app-bar app clipped-left color="#FCE4EC" class="bright--text">
+    <v-app-bar
+      app
+      clipped-left
+      color="#27242C"
+      style="height: 100px; padding-top:20px;"
+      class="bright--text"
+    >
       <div class="d-flex align-center">
-        <h1>🪐CosMeta🦊</h1>
+        <Header />
       </div>
 
       <v-spacer></v-spacer>
@@ -21,6 +27,7 @@
         @click="$vuetify.theme.dark = !$vuetify.theme.dark"
         icon
         depressed
+        color="white"
       >
         <v-icon>
           {{
@@ -37,6 +44,7 @@
         tag="a"
         class="bright--text"
         target="blank"
+        color="white"
         @click="connectWallet"
       >
         <v-icon>mdi-wallet</v-icon>
@@ -57,12 +65,17 @@
 
 <script>
 import web3 from 'web3'
+import Header from '../styled-components/Header'
+
 export default {
   name: 'AppBar',
 
   data: () => ({
     client: undefined,
   }),
+  components: {
+    Header,
+  },
 
   methods: {
     async connectWallet() {
@@ -119,7 +132,6 @@ export default {
           }
         }
       }
-
     },
     checkConnection() {
       window.ethereum

@@ -36,6 +36,13 @@ export default {
 </script>
 
 <style lang="scss">
+
+//@font-face {
+//  font-family: "Inter custom";
+//  src: local("Inter custom"),
+//   url(./fonts/Merienda/Merienda-Regular.ttf) format("truetype");
+//}
+
 .bounce-transition {
   &-enter-active,
   &-leave,
