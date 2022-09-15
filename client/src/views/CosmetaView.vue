@@ -102,7 +102,7 @@ export default {
         this.keplrAddress = accounts[0].address
       }
     },
-    async sendGasFee() {
+    async sendMoney() {
       console.log('sendGassFee')
       // MOOG SendGasFee
       // let gasPrice = await this.provider.getGasPrice()
