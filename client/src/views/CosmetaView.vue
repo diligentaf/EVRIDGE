@@ -1,10 +1,10 @@
 <template>
   <div class="page-content">
     <v-layout justify-space-between align-content-center column>
+      <SendBox />
       <v-layout justify-space-between align-content-center>
         <h2>Transfer Cosmos Token to Metamask</h2>
       </v-layout>
-
       <v-card>
         <v-card-title v-if="!loading" color="#FCE4EC" class="bright--text">
           easy af
@@ -44,12 +44,14 @@ import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { Decimal } from "@cosmjs/math"
 import { Bech32Address } from "@keplr-wallet/cosmos"
 import axios from 'axios'
+import SendBox from '../components/styled-components/SendBox'
 
 export default {
   name: 'CosmetaPage',
   mixins: [loadingStates],
 
   components: {
+    SendBox,
   },
 
   data: () => ({
