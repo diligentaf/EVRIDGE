@@ -1,38 +1,26 @@
 <template>
   <div class="page-content">
     <v-layout justify-space-between align-content-center column>
-      <v-layout justify-space-between align-content-center>
-        <h2>Metamask to Keplr</h2>
-      </v-layout>
-      <v-card>
-        <v-card-title v-if="!loading" color="#FCE4EC" class="bright--text">
-          easy af
-        </v-card-title>
-        <v-card-title v-else color="#FCE4EC" class="bright--text">
-          Please be patient ...
-          <br />
-          <v-progress-linear color="warning" animated buffer-value="0" v-bind:value="progressBar" height="25" stream>
-            <strong animated class="primary bright--text">{{ Math.ceil(this.progressBar) }}%</strong>
-          </v-progress-linear>
-        </v-card-title>
-
-        <v-card-text>
-          <v-form>
-            <v-text-field v-model="metamaskAddress" label="Your Metamask Address" />
-            <v-text-field type="text" v-model="amount" label="amount" />
-            👇 👇 👇 👇
-            <br>
-            <v-text-field v-model="keplrAddress" label="Your Keplr Address" />
-          </v-form>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="success" @click="submit()" :loading="loading">
-            Submit
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+      <Container>
+        <TitleBox>Metamask to Keplr</TitleBox>
+        <AddressInputBox>
+          <AddressInput
+            v-model="metamaskAddress"
+            placeholder="Send to (Metamask Address)"
+          />
+        </AddressInputBox>
+        <AddressInputBox>
+          <AddressInput
+            v-model="keplrAddress"
+            placeholder="Your Keplr Address"
+          />
+        </AddressInputBox>
+        <AddressInputBox>
+          <AddressInput v-model="amount" placeholder="0.0" />
+          <CurrencyBox>OSMO $</CurrencyBox>
+        </AddressInputBox>
+        <SubmitButton @click="submit()" :loading="loading">Submit</SubmitButton>
+      </Container>
     </v-layout>
   </div>
 </template>
@@ -43,6 +31,14 @@ import web3 from 'web3'
 import TokenJson from '@/artifacts/contracts/Token.sol/Token.json'
 import axios from 'axios'
 import file from '@/data/secret.json'
+import {
+  Container,
+  TitleBox,
+  AddressInputBox,
+  AddressInput,
+  CurrencyBox,
+  SubmitButton,
+} from '../components/styled-components/SendBox'
 
 // import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 // import { Decimal } from "@cosmjs/math"
@@ -53,6 +49,12 @@ export default {
   mixins: [loadingStates],
 
   components: {
+    AddressInput,
+    CurrencyBox,
+    SubmitButton,
+    Container,
+    TitleBox,
+    AddressInputBox,
   },
 
   data: () => ({
