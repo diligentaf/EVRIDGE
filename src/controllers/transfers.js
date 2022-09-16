@@ -36,7 +36,7 @@ const transferKeplrToMetamask = async (req, res) => {
   try {
     const createdTransfer = await transfer.save();
 
-    res.status(201).json({ transfer: createdTransfer });
+    res.status(200).json({ transfer: createdTransfer });
   } catch (error) {
     log.error(error, "Error creating transfer: {}", transfer.email);
     let errStatus = error.name === "ValidationError" ? 400 : 500;
@@ -131,7 +131,7 @@ const transferMetamaskToKeplr = async (req, res) => {
   try {
     const createdTransfer = await transfer.save();
 
-    res.status(201).json({ transfer: createdTransfer });
+    res.status(200).json({ transfer: createdTransfer });
   } catch (error) {
     log.error(error, "Error creating transfer: {}", transfer.email);
     let errStatus = error.name === "ValidationError" ? 400 : 500;

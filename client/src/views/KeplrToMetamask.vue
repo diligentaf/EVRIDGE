@@ -4,16 +4,10 @@
       <Container>
         <TitleBox>Transfer Cosmos Token to Metamask</TitleBox>
         <AddressInputBox>
-          <AddressInput
-            v-model="keplrAddress"
-            placeholder="Your Keplr Address"
-          />
+          <AddressInput v-model="keplrAddress" placeholder="Your Keplr Address" />
         </AddressInputBox>
         <AddressInputBox>
-          <AddressInput
-            v-model="metamaskAddress"
-            placeholder="Send to (Metamask Address)"
-          />
+          <AddressInput v-model="metamaskAddress" placeholder="Send to (Metamask Address)" />
         </AddressInputBox>
         <AddressInputBox>
           <AddressInput v-model="amount" placeholder="0.0" />
@@ -194,8 +188,14 @@ export default {
         const http = axios.create({
           baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
         })
-        http.post('/transferKeplrToMetamask', newTransfer)
-        this.$emit('success', newTransfer)
+        let result = 0
+        await http.post('/transferKeplrToMetamask', newTransfer).then(response => (
+          result = response.status
+        ))
+        if (result == 200) {
+          alert('osmo successfully bridged over to metamask 🦊')
+          this.$router.push('/import')
+        }
       } catch (error) {
         console.error(error)
         this.$emit('error', { error })
@@ -253,4 +253,6 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+
+</style>
