@@ -16,7 +16,7 @@
           <CurrencyBox>OSMO $</CurrencyBox>
         </AddressInputBox>
         <SubmitButton v-if="submitValid" style="background-color: rgb(33, 114, 229);" @click="submit()" :loading="loading">Submit</SubmitButton>
-        <SubmitButton v-else @click="submit()" :loading="loading">Submit</SubmitButton>
+        <SubmitButton v-else>Submit</SubmitButton>
       </Container>
     </v-layout>
   </div>
