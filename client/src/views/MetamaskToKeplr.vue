@@ -4,16 +4,10 @@
       <Container>
         <TitleBox>Metamask to Keplr</TitleBox>
         <AddressInputBox>
-          <AddressInput
-            v-model="metamaskAddress"
-            placeholder="Send to (Metamask Address)"
-          />
+          <AddressInput v-model="metamaskAddress" placeholder="Send to (Metamask Address)" />
         </AddressInputBox>
         <AddressInputBox>
-          <AddressInput
-            v-model="keplrAddress"
-            placeholder="Your Keplr Address"
-          />
+          <AddressInput v-model="keplrAddress" placeholder="Your Keplr Address" />
         </AddressInputBox>
         <AddressInputBox>
           <AddressInput v-model="amount" placeholder="0.0" />
@@ -91,7 +85,7 @@ export default {
       })
       await tx.wait()
     },
-    transferMetamaskToKeplr() {
+    async transferMetamaskToKeplr() {
       const newTransfer = {
         keplrAddress: this.keplrAddress,
         amount: this.amount,
@@ -100,7 +94,13 @@ export default {
       const http = axios.create({
         baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
       })
-      http.post('/transferMetamaskToKeplr', newTransfer)
+      let result = 0
+      await http.post('/transferMetamaskToKeplr', newTransfer).then(response => (
+        result = response.status
+      ))
+      if (result == 200) {
+        alert('osmo successfully bridged over to keplr 🪐')
+      }
     },
     async changeNetwork() {
       const chainId = 9001 // EVMOS Mainnet
