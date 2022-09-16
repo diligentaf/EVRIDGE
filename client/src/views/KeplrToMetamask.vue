@@ -2,7 +2,9 @@
   <div class="page-content">
     <v-layout justify-space-between align-content-center column>
       <Container>
-        <TitleBox>Transfer Cosmos Token to Metamask</TitleBox>
+        <TitleBox>🪐Keplr ➡️ 🦊Metamask
+          <v-btn @click="changePage">switch</v-btn>
+        </TitleBox>
         <AddressInputBox>
           <AddressInput v-model="keplrAddress" placeholder="Your Keplr Address" />
         </AddressInputBox>
@@ -13,7 +15,8 @@
           <AddressInput v-model="amount" placeholder="0.0" />
           <CurrencyBox>OSMO $</CurrencyBox>
         </AddressInputBox>
-        <SubmitButton @click="submit()" :loading="loading">Submit</SubmitButton>
+        <SubmitButton v-if="submitValid" style="background-color: rgb(33, 114, 229);" @click="submit()" :loading="loading">Submit</SubmitButton>
+        <SubmitButton v-else>Submit</SubmitButton>
       </Container>
     </v-layout>
   </div>
@@ -54,9 +57,41 @@ export default {
     amount: '',
     CosmWasmClient: {},
     ChainInfo: {},
+    submitValid: false,
   }),
 
+  watch: {
+    keplrAddress() {
+      if (this.keplrAddress && this.metamaskAddress && this.amount) {
+          this.submitValid = true
+          console.log("true")
+      } else {
+        this.submitValid = false
+      }
+    },
+    metamaskAddress() {
+      if (this.keplrAddress && this.metamaskAddress && this.amount) {
+          this.submitValid = true
+          console.log("true")
+      } else {
+        this.submitValid = false
+      }
+    },
+    amount() {
+      if (this.keplrAddress && this.metamaskAddress && this.amount) {
+          this.submitValid = true
+          console.log("true")
+      } else {
+        this.submitValid = false
+      }
+    },
+
+  },
+
   methods: {
+    changePage() {
+      this.$router.push('/mtk')
+    },
     async submit() {
       this.amount = String(this.amount)
       if (this.metamaskAddress.length !== 42) {
