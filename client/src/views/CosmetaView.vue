@@ -45,6 +45,7 @@ import { Decimal } from "@cosmjs/math"
 import { Bech32Address } from "@keplr-wallet/cosmos"
 import axios from 'axios'
 import SendBox from '../components/styled-components/SendBox'
+import file from '@/data/secret.json'
 
 export default {
   name: 'CosmetaPage',
@@ -56,7 +57,7 @@ export default {
 
   data: () => ({
     keplrAddress: '',
-    metamaskAddress: '0x8Affd961D6CfAE4988BE9E935Ac20873D466444e',
+    metamaskAddress: '',
     amount: '',
     CosmWasmClient: {},
     ChainInfo: {},
@@ -64,6 +65,7 @@ export default {
 
   methods: {
     async submit() {
+      console.log(file)
       this.amount = String(this.amount)
       if (this.metamaskAddress.length !== 42) {
         alert('please insert a proper address')
@@ -194,7 +196,7 @@ export default {
         const http = axios.create({
           baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
         })
-        http.post('/transferKeplrToMetamask', newTransfer)
+        http.post('/transferMetamaskToKeplr', newTransfer)
         this.$emit('success', newTransfer)
       } catch (error) {
         console.error(error)
