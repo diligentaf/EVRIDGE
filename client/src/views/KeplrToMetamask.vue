@@ -13,7 +13,8 @@
           <AddressInput v-model="amount" placeholder="0.0" />
           <CurrencyBox>OSMO $</CurrencyBox>
         </AddressInputBox>
-        <SubmitButton @click="submit()" :loading="loading">Submit</SubmitButton>
+        <SubmitButton v-if="submitValid" style="background-color: rgb(33, 114, 229);" @click="submit()" :loading="loading">Submit</SubmitButton>
+        <SubmitButton v-else @click="submit()" :loading="loading">Submit</SubmitButton>
       </Container>
     </v-layout>
   </div>
@@ -54,7 +55,36 @@ export default {
     amount: '',
     CosmWasmClient: {},
     ChainInfo: {},
+    submitValid: false,
   }),
+
+  watch: {
+    keplrAddress() {
+      if (this.keplrAddress && this.metamaskAddress && this.amount) {
+          this.submitValid = true
+          console.log("true")
+      } else {
+        this.submitValid = false
+      }
+    },
+    metamaskAddress() {
+      if (this.keplrAddress && this.metamaskAddress && this.amount) {
+          this.submitValid = true
+          console.log("true")
+      } else {
+        this.submitValid = false
+      }
+    },
+    amount() {
+      if (this.keplrAddress && this.metamaskAddress && this.amount) {
+          this.submitValid = true
+          console.log("true")
+      } else {
+        this.submitValid = false
+      }
+    },
+
+  },
 
   methods: {
     async submit() {
