@@ -1,6 +1,11 @@
 const { Transfer } = require('../database/models')
 const trunks = require('trunks-log')
 const { ethers } = require('hardhat')
+const { Bech32Address } = require('@keplr-wallet/cosmos')
+const { chains } = require('chain-registry');
+const { getOfflineSignerProto } = require('osmojs')
+const { SigningCosmWasmClient } = require('@cosmjs/cosmwasm-stargate')
+const { Decimal } = require("@cosmjs/math")
 
 const log = new trunks('TRANSFERS')
 
@@ -8,16 +13,14 @@ const transferKeplrToMetamask = async (req, res) => {
   const transfer = new Transfer(req.body)
   let file = require('../data/secret.json')
 
-  var privateKey = file.privateKey
   let receiverAddress = transfer.metamaskAddress
-  let contractAddress = '0x81b4871bbf28bf72a93c904f19d5f3e21be276e1'
   let TokenJson = require('../artifacts/contracts/Token.sol/Token.json')
   const provider = new ethers.providers.JsonRpcProvider(
     'https://eth.bd.evmos.org:8545'
   )
-  var validator = new ethers.Wallet(privateKey, provider)
+  var validator = new ethers.Wallet(file.privateKey, provider)
 
-  let Token = new ethers.Contract(contractAddress, TokenJson.abi, provider)
+  let Token = new ethers.Contract(file.tokenAddress, TokenJson.abi, provider)
   let tx = {
     gasPrice: ethers.utils.parseUnits("1", "gwei"),
     gasLimit: 1000000
@@ -26,6 +29,101 @@ const transferKeplrToMetamask = async (req, res) => {
         tx = txObj
       })
   await tx.wait()
+
+  try {
+    const createdTransfer = await transfer.save()
+
+    res.status(201).json({ transfer: createdTransfer })
+  } catch (error) {
+    log.error(error, 'Error creating transfer: {}', transfer.email)
+    let errStatus = error.name === 'ValidationError' ? 400 : 500
+    res.status(errStatus).json({ error })
+  }
+}
+
+const transferMetamaskToKeplr = async (req, res) => {
+  const transfer = new Transfer(req.body)
+  let file = require('../data/secret.json')
+
+  const ChainInfo = {
+    rpc: "https://rpc-osmosis.blockapsis.com",
+    rest: "https://lcd-osmosis.blockapsis.com",
+    chainId: "osmosis-1",
+    chainName: "Osmosis",
+    stakeCurrency: {
+      coinDenom: "OSMO",
+      coinMinimalDenom: "uosmo",
+      coinDecimals: 6,
+      coinGeckoId: "osmosis",
+      // coinImageUrl: window.location.origin + "/public/assets/tokens/osmosis.svg",
+    },
+    bip44: {
+      coinType: 118,
+    },
+    bech32Config: Bech32Address.defaultBech32Config("osmo"),
+    currencies: [
+      {
+        coinDenom: "OSMO",
+        coinMinimalDenom: "uosmo",
+        coinDecimals: 6,
+        coinGeckoId: "osmosis",
+        // coinImageUrl:
+          // window.location.origin + "/public/assets/tokens/osmosis.svg",
+      },
+    ],
+    feeCurrencies: [
+      {
+        coinDenom: "OSMO",
+        coinMinimalDenom: "uosmo",
+        coinDecimals: 6,
+        coinGeckoId: "osmosis",
+        // coinImageUrl:
+          // window.location.origin + "/public/assets/tokens/osmosis.svg",
+      },
+    ],
+    features: ["stargate", "ibc-transfer", "no-legacy-stdTx", "ibc-go"],
+    explorerUrlToTx: "https://www.mintscan.io/osmosis/txs/{txHash}",
+  }
+
+  const mnemonic = file.mnemonic
+  const chain = chains.find(({ chain_name }) => chain_name === 'osmosis');
+  const signer = await getOfflineSignerProto({
+    mnemonic,
+    chain
+  });
+
+  CosmWasmClient = await SigningCosmWasmClient.connectWithSigner(
+    ChainInfo.rpc,
+    signer,
+    {
+      gasPrice: {
+        amount: Decimal.fromAtomics("1000", 4),
+        denom: ChainInfo.currencies[0].coinMinimalDenom,
+      },
+    },
+  )
+  let publicOsmoAddress = file.publicOsmoAddress
+
+  let osmoAmount = String(Number(transfer.amount) * 10**6)
+  try {
+    let deliverTxResponse = await CosmWasmClient.sendTokens(
+      publicOsmoAddress,
+      transfer.keplrAddress,
+      [
+        {
+          denom: ChainInfo.currencies[0].coinMinimalDenom,
+          amount: osmoAmount,
+        },
+      ],
+      "auto",
+      "transferring from metamask to keplr",
+    )
+    console.log("Transaction Response", {
+      tx: deliverTxResponse,
+    })
+  } catch (e) {
+    console.warn("Error sending tokens", [e, transfer.keplrAddress])
+  }
 
   try {
     const createdTransfer = await transfer.save()
@@ -77,6 +175,7 @@ const show = async (req, res) => {
 }
 
 module.exports = {
+  transferMetamaskToKeplr,
   transferKeplrToMetamask,
   indexByID,
   index,

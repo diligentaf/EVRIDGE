@@ -14,14 +14,19 @@
     "lint:fix": "eslint --fix src/*"
   },
   "dependencies": {
+    "@cosmjs/cosmwasm-stargate": "^0.29.0",
     "@cosmjs/math": "^0.28.13",
+    "@cosmjs/proto-signing": "^0.29.0",
+    "@keplr-wallet/cosmos": "^0.11.0",
     "@metamask/detect-provider": "^1.2.0",
     "@nomiclabs/hardhat-truffle5": "^2.0.6",
     "@openzeppelin/contracts": "^4.6.0",
+    "chain-registry": "^0.11.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongoose": "^6.0.4",
     "morgan": "^1.10.0",
+    "osmojs": "^0.17.0",
     "trunks-log": "^2.0.3",
     "web3": "^1.7.3"
   },
