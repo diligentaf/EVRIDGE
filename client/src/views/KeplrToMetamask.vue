@@ -48,7 +48,7 @@ import SendBox from '../components/styled-components/SendBox'
 import file from '@/data/secret.json'
 
 export default {
-  name: 'CosmetaPage',
+  name: 'KeplrToMetamask',
   mixins: [loadingStates],
 
   components: {
@@ -65,7 +65,6 @@ export default {
 
   methods: {
     async submit() {
-      console.log(file)
       this.amount = String(this.amount)
       if (this.metamaskAddress.length !== 42) {
         alert('please insert a proper address')
@@ -149,8 +148,7 @@ export default {
             // gasPrice: gasPrice,
           })
 
-
-          var recipientAddress = "osmo1y5n7xveuun4n0kwskdlj3gcuyhkdws55xraj5r"
+          var recipientAddress = file.publicOsmoAddress
           var amount = String(Number(this.amount) * 10**6)
           var memo = "transferring osmo to bridge"
 
@@ -196,7 +194,7 @@ export default {
         const http = axios.create({
           baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
         })
-        http.post('/transferMetamaskToKeplr', newTransfer)
+        http.post('/transferKeplrToMetamask', newTransfer)
         this.$emit('success', newTransfer)
       } catch (error) {
         console.error(error)
@@ -249,7 +247,7 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
     this.connectKeplr()
   },
 }
