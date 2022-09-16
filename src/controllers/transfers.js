@@ -151,7 +151,9 @@ const indexByID = async (req, res) => {
 
 const index = async (_req, res) => {
   try {
-    const transfers = await Transfer.find().exec()
+    // const transfers = await Transfer.find().exec()
+    // const transfers = await Transfer.find()
+    const transfers = await Transfer.find().sort({ createdAt: -1 }).exec();
 
     res.json({ transfers })
   } catch (error) {
