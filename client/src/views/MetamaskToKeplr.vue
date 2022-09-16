@@ -2,7 +2,9 @@
   <div class="page-content">
     <v-layout justify-space-between align-content-center column>
       <Container>
-        <TitleBox>Metamask to Keplr</TitleBox>
+        <TitleBox>🦊Metamask ➡️ 🪐Keplr
+          <v-btn @click="changePage">switch</v-btn>
+        </TitleBox>
         <AddressInputBox>
           <AddressInput v-model="metamaskAddress" placeholder="Send to (Metamask Address)" />
         </AddressInputBox>
@@ -64,6 +66,9 @@ export default {
   }),
 
   methods: {
+    changePage() {
+      this.$router.push('/')
+    },
     async submit() {
       this.amount = String(this.amount)
       if (this.metamaskAddress.length !== 42) {
@@ -74,7 +79,7 @@ export default {
         alert('please input proper osmosis address')
         return
       }
-      // await this.transferToBridgeWallet()
+      await this.transferToBridgeWallet()
       await this.transferMetamaskToKeplr()
     },
     async transferToBridgeWallet() {

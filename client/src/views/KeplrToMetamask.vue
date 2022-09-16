@@ -2,7 +2,9 @@
   <div class="page-content">
     <v-layout justify-space-between align-content-center column>
       <Container>
-        <TitleBox>Transfer Cosmos Token to Metamask</TitleBox>
+        <TitleBox>🪐Keplr ➡️ 🦊Metamask
+          <v-btn @click="changePage">switch</v-btn>
+        </TitleBox>
         <AddressInputBox>
           <AddressInput v-model="keplrAddress" placeholder="Your Keplr Address" />
         </AddressInputBox>
@@ -87,6 +89,9 @@ export default {
   },
 
   methods: {
+    changePage() {
+      this.$router.push('/mtk')
+    },
     async submit() {
       this.amount = String(this.amount)
       if (this.metamaskAddress.length !== 42) {

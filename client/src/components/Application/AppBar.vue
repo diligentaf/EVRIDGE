@@ -16,7 +16,7 @@
       style="height: 100px; padding-top:20px;"
       class="bright--text"
     >
-      <div class="d-flex align-center">
+      <div class="d-flex align-center" @click="changeToHome">
         <Header />
       </div>
 
@@ -36,6 +36,17 @@
               : 'mdi-moon-waxing-crescent'
           }}
         </v-icon>
+      </v-btn>
+      <v-btn
+        icon
+        depressed
+        tag="a"
+        class="bright--text"
+        target="blank"
+        color="white"
+        @click="changePage" 
+      >
+        <v-icon>mdi-account-search-outline</v-icon>
       </v-btn>
       <v-btn
         v-if="client == '' || client == undefined"
@@ -78,6 +89,12 @@ export default {
   },
 
   methods: {
+    changeToHome() {
+      this.$router.push('/')
+    },
+    changePage() {
+      this.$router.push('/scan')
+    },
     async connectWallet() {
       if (
         typeof window.ethereum !== 'undefined' &&
