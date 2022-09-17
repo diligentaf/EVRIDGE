@@ -168,34 +168,44 @@ export default {
       }
     },
     async transferMetamaskToKeplr() {
-      const newTransfer = {
-        keplrAddress: this.keplrAddress,
-        amount: this.amount,
-        metamaskAddress: this.metamaskAddress,
-        direction: "️⬅️",
-        metamaskExplorer: this.txHash,
-      }
-      const http = axios.create({
-        baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
-      })
-      let result = 0
-      await http.post('/transferMetamaskToKeplr', newTransfer).then(response => (
-        result = response.status
-      ))
-      if (result == 200) {
-        this.$fire({
-          title: "osmo successfully bridged over to keplr 🪐",
-          text: "please check your keplr wallet",
-          type: "success",
-        }).then(r => {
-          this.bridging = false
-          this.astep = false
-          this.bstep = false
-          this.cstep = false
+      try {
+        const newTransfer = {
+          keplrAddress: this.keplrAddress,
+          amount: this.amount,
+          metamaskAddress: this.metamaskAddress,
+          direction: "️⬅️",
+          metamaskExplorer: this.txHash,
+        }
+        const http = axios.create({
+          baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
         })
-        this.$router.push('/explorer')
+        let result = 0
+        await http.post('/transferMetamaskToKeplr', newTransfer).then(response => (
+          result = response.status
+        ))
+        if (result == 200) {
+          this.$fire({
+            title: "osmo successfully bridged to keplr 🪐",
+            text: "check your transaction in explorer",
+            type: "success",
+          }).then(r => {
+            this.bridging = false
+            this.astep = false
+            this.bstep = false
+            this.cstep = false
+            this.$router.push('/explorer')
+          })
+        }
+        this.txHash = ''
+      } catch (e) {
+        this.$fire({
+          title: "something badly went wrong. please contact yewon 👧🏻",
+          text: "it's all her fault",
+          type: "error",
+        })
+        console.error(e)
+        this.$emit('error', { e})
       }
-      this.txHash = ''
     },
     async changeNetwork() {
       const chainId = 9001 // EVMOS Mainnet
