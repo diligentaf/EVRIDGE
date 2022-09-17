@@ -3,7 +3,7 @@ import styled from 'vue-styled-components'
 export const Container = styled.div`
   width: 90%;
   max-width: 480px;
-  height: 460px;
+  height: 500px;
   border-radius: 24px;
   margin-top: 1rem;
   box-shadow: rgb(0 0 0 / 1%) 0px 0px 1px, rgb(0 0 0 / 4%) 0px 4px 8px,

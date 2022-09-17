@@ -2,18 +2,19 @@
   <div class="page-content">
     <v-layout justify-space-between align-content-center column>
       <Container>
-        <TitleBox>🪐Keplr ➡️ 🦊Metamask
-          <v-btn @click="changePage">switch</v-btn>
+        <TitleBox class="justify-center">🪐Keplr ➡️ 🦊Metamask
+          <v-btn class="space" @click="changePage">switch</v-btn>
         </TitleBox>
         <AddressInputBox>
           <AddressInput v-model="keplrAddress" placeholder="Your Keplr Address" />
         </AddressInputBox>
         <AddressInputBox>
-          <AddressInput v-model="metamaskAddress" placeholder="Send to (Metamask Address)" />
-        </AddressInputBox>
-        <AddressInputBox>
           <AddressInput v-model="amount" placeholder="0.0" />
           <CurrencyBox>OSMO $</CurrencyBox>
+        </AddressInputBox>
+        <div class="d-flex justify-center mb-6">⬇️</div>
+        <AddressInputBox>
+          <AddressInput v-model="metamaskAddress" placeholder="To Metamask" />
         </AddressInputBox>
         <SubmitButton v-if="submitValid" style="background-color: rgb(33, 114, 229);" @click="submit()" :loading="loading">Submit</SubmitButton>
         <SubmitButton v-else>Submit</SubmitButton>
@@ -288,6 +289,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.space {
+  margin: 0 60px;
+}
 
 </style>
