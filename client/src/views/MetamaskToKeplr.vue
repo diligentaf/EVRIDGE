@@ -6,9 +6,9 @@
           <v-btn class="space" @click="changePage">switch</v-btn>
         </TitleBox>
         <v-select
-          background-color="white"
+          v-model="select"
           :items="coins"
-          label="Choose the Token"
+          label="Select the Token"
           outlined
         ></v-select>
         <AddressInputBox>
@@ -70,7 +70,16 @@ export default {
     providekr: {},
     signer: {},
     publicMetamaskAddress: '',
-    coins: ['OSMO', 'ATOM (Coming Soon)', 'JUNO (Coming Soon)', 'CRO (Coming Soon)', 'OKB (Coming Soon)', 'RUNE (Coming Soon)'],
+    select: {text: 'OSMO', value: 'OSMO'},
+    coins: [
+      {text: 'OSMO', value: 'OSMO'}, 
+      {text: 'ATOM (Coming Soon)', value: 'ATOM', disabled: true},
+      {text: 'JUNO (Coming Soon)', value: 'JUNO', disabled: true},
+      {text: 'CRO (Coming Soon)', value: 'CRO', disabled: true},
+      {text: 'OKB (Coming Soon)', value: 'OKB', disabled: true},
+      {text: 'RUNE (Coming Soon)', value: 'RUNE', disabled: true},
+    ],
+    txHash: '',
   }),
 
   methods: {
@@ -88,7 +97,9 @@ export default {
         return
       }
       await this.transferToBridgeWallet()
-      await this.transferMetamaskToKeplr()
+      if (this.txHash !== '') {
+        await this.transferMetamaskToKeplr()
+      }
     },
     async transferToBridgeWallet() {
       let Token = new this.$ethers.Contract(this.contractAddress, TokenJson.abi, this.provider)
@@ -97,12 +108,15 @@ export default {
         tx = txObj
       })
       await tx.wait()
+      this.txHash = tx.hash
     },
     async transferMetamaskToKeplr() {
       const newTransfer = {
         keplrAddress: this.keplrAddress,
         amount: this.amount,
         metamaskAddress: this.metamaskAddress,
+        direction: "️⬅️",
+        metamaskExplorer: this.txHash,
       }
       const http = axios.create({
         baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
@@ -114,6 +128,7 @@ export default {
       if (result == 200) {
         alert('osmo successfully bridged over to keplr 🪐')
       }
+      this.txHash = ''
     },
     async changeNetwork() {
       const chainId = 9001 // EVMOS Mainnet
@@ -190,6 +205,7 @@ export default {
     },
   },
   async mounted() {
+    this.$vuetify.theme.dark = true
     this.contractAddress = file.tokenAddress
     this.publicMetamaskAddress = file.publicMetamaskAddress
     await this.connectWallet()

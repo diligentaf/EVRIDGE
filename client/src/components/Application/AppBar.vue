@@ -23,52 +23,10 @@
       <v-spacer></v-spacer>
 
       <v-btn
-        class="bright--text mr-3"
-        @click="$vuetify.theme.dark = !$vuetify.theme.dark"
-        icon
-        depressed
-        color="white"
-      >
-        <v-icon>
-          {{
-            !$vuetify.theme.dark
-              ? 'mdi-weather-sunny'
-              : 'mdi-moon-waxing-crescent'
-          }}
-        </v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        depressed
-        tag="a"
-        class="bright--text"
-        target="blank"
-        color="white"
         @click="changePage" 
       >
+        Evridge Scan
         <v-icon>mdi-account-search-outline</v-icon>
-      </v-btn>
-      <v-btn
-        v-if="client == '' || client == undefined"
-        icon
-        depressed
-        tag="a"
-        class="bright--text"
-        target="blank"
-        color="white"
-        @click="connectWallet"
-      >
-        <v-icon>mdi-wallet</v-icon>
-      </v-btn>
-      <v-btn
-        v-else
-        depressed
-        color="primary"
-        tag="a"
-        class="bright--text"
-        target="blank"
-      >
-        {{ client }}
       </v-btn>
     </v-app-bar>
   </div>
@@ -93,7 +51,7 @@ export default {
       this.$router.push('/')
     },
     changePage() {
-      this.$router.push('/scan')
+      this.$router.push('/explorer')
     },
     async connectWallet() {
       if (

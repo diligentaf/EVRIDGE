@@ -60,12 +60,13 @@ export default {
     list: [],
     listExist: false,
     titleList: [
-      '_id',
+      'keplrExplorer',
+      'metamaskExplorer',
       'keplrAddress',
+      'direction',
       'metamaskAddress',
       'amount',
       'createdAt',
-      'updatedAt',
     ],
   }),
   watch: {
@@ -113,6 +114,7 @@ export default {
     },
   },
   async mounted() {
+    this.$vuetify.theme.dark = true
     const http = await axios.create({
       baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
     })
