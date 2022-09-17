@@ -134,6 +134,7 @@ export default {
       this.$router.push('/mtk')
     },
     async submit() {
+      this.txHash = ''
       this.bridging = true
       this.astep = false
       this.bstep = false
@@ -310,6 +311,7 @@ export default {
             text: "import token to metamask",
             type: "success",
           }).then(r => {
+            this.txHash = ''
             this.importToken()
             this.bridging = false
             this.astep = false
@@ -318,7 +320,6 @@ export default {
             this.$router.push('/explorer')
           })
         }
-        this.txHash = ''
         this.astep = false
         this.bstep = false
         // this.cstep = true
