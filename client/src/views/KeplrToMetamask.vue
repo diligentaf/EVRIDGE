@@ -27,7 +27,7 @@
           <v-card>
             <v-card-title class="text-h5">
               Don't Panic 🟢 <br />
-              Transaction in Pocess ..
+              Transaction in Process ..
             </v-card-title>
             <v-card-text v-if="astep">➡️ transferring your osmo<v-progress-circular indeterminate
                 color="green"></v-progress-circular>
@@ -307,8 +307,8 @@ export default {
         ))
         if (result == 200) {
           this.$fire({
-            title: "osmo successfully bridged to metamask 🦊",
-            text: "import token to metamask",
+            title: "OSMO successfully transferred to 🅴🆅🅼🅾🆂",
+            text: "import osmo token on metamask 🦊",
             type: "success",
           }).then(r => {
             this.txHash = ''
@@ -325,7 +325,7 @@ export default {
         // this.cstep = true
       } catch (error) {
         this.$fire({
-          title: "something badly went wrong. please contact yewon 👧🏻",
+          title: "something terribly went wrong. please contact yewon 👧🏻",
           text: "it's all her fault",
           type: "error",
         })
