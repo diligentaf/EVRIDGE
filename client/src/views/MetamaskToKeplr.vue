@@ -110,6 +110,7 @@ export default {
       this.$router.push('/')
     },
     async submit() {
+      this.txHash = ''
       this.bridging = true
       this.astep = false
       this.bstep = false
@@ -124,6 +125,7 @@ export default {
         this.astep = false
         this.bstep = false
         this.cstep = false
+        this.txHash = ''
         return
       }
       if (this.keplrAddress.length !== 43) {
@@ -135,6 +137,7 @@ export default {
         this.astep = false
         this.bstep = false
         this.cstep = false
+        this.txHash = ''
         return
       }
       this.bridging = true
@@ -160,6 +163,7 @@ export default {
           title: "Transaction rejected. please try again",
           type: "error",
         })
+        this.txHash = ''
         this.bridging = false
         this.astep = false
         this.bstep = false
@@ -189,6 +193,7 @@ export default {
             text: "check your transaction in explorer",
             type: "success",
           }).then(r => {
+            this.txHash = ''
             this.bridging = false
             this.astep = false
             this.bstep = false
@@ -196,8 +201,8 @@ export default {
             this.$router.push('/explorer')
           })
         }
-        this.txHash = ''
       } catch (e) {
+        this.txHash = ''
         this.$fire({
           title: "something badly went wrong. please contact yewon 👧🏻",
           text: "it's all her fault",
