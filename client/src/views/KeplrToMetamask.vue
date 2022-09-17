@@ -5,12 +5,7 @@
         <TitleBox class="justify-center">🪐Keplr ➡️ 🦊Metamask
           <v-btn class="space" @click="changePage">switch</v-btn>
         </TitleBox>
-        <v-select
-          v-model="select"
-          :items="coins"
-          label="Select the Token"
-          outlined
-        ></v-select>
+        <v-select v-model="select" :items="coins" label="Select the Token" outlined></v-select>
         <AddressInputBox>
           <AddressInput v-model="keplrAddress" placeholder="Your Keplr Address" />
         </AddressInputBox>
@@ -22,9 +17,34 @@
         <AddressInputBox>
           <AddressInput v-model="metamaskAddress" placeholder="To Metamask" />
         </AddressInputBox>
-        <SubmitButton v-if="submitValid" style="background-color: rgb(33, 114, 229);" @click="submit()" :loading="loading">Submit</SubmitButton>
+        <SubmitButton v-if="submitValid" style="background-color: rgb(33, 114, 229);" @click="submit()"
+          :loading="loading">Submit</SubmitButton>
         <SubmitButton v-else>Submit</SubmitButton>
       </Container>
+
+      <v-row justify="center">
+        <v-dialog v-model="bridging" persistent max-width="330">
+          <v-card>
+            <v-card-title class="text-h5">
+              Don't Panic 🟢 <br />
+              Bridging in Progress ..
+            </v-card-title>
+            <v-card-text v-if="astep">➡️ transferring your osmo<v-progress-circular indeterminate
+                color="green"></v-progress-circular>
+            </v-card-text>
+            <v-card-text v-else>transferring your osmo ✅</v-card-text>
+            <v-card-text v-if="bstep">➡️ transferring to metamask <v-progress-circular indeterminate color="green">
+              </v-progress-circular>
+            </v-card-text>
+            <v-card-text v-else-if="bstep == false && astep == true"></v-card-text>
+            <v-card-text v-else> transferring to metamask ✅</v-card-text>
+            <v-card-text v-if="cstep">➡️ Done ✅</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
     </v-layout>
   </div>
 </template>
@@ -59,20 +79,24 @@ export default {
   },
 
   data: () => ({
+    bridging: false,
+    astep: false,
+    bstep: false,
+    cstep: true,
     keplrAddress: '',
     metamaskAddress: '',
     amount: '',
     CosmWasmClient: {},
     ChainInfo: {},
     submitValid: false,
-    select: {text: 'OSMO', value: 'OSMO'},
+    select: { text: 'OSMO', value: 'OSMO' },
     coins: [
-      {text: 'OSMO', value: 'OSMO'}, 
-      {text: 'ATOM (Coming Soon)', value: 'ATOM', disabled: true},
-      {text: 'JUNO (Coming Soon)', value: 'JUNO', disabled: true},
-      {text: 'CRO (Coming Soon)', value: 'CRO', disabled: true},
-      {text: 'OKB (Coming Soon)', value: 'OKB', disabled: true},
-      {text: 'RUNE (Coming Soon)', value: 'RUNE', disabled: true},
+      { text: 'OSMO', value: 'OSMO' },
+      { text: 'ATOM (Coming Soon)', value: 'ATOM', disabled: true },
+      { text: 'JUNO (Coming Soon)', value: 'JUNO', disabled: true },
+      { text: 'CRO (Coming Soon)', value: 'CRO', disabled: true },
+      { text: 'OKB (Coming Soon)', value: 'OKB', disabled: true },
+      { text: 'RUNE (Coming Soon)', value: 'RUNE', disabled: true },
     ],
     txHash: '',
   }),
@@ -80,24 +104,24 @@ export default {
   watch: {
     keplrAddress() {
       if (this.keplrAddress && this.metamaskAddress && this.amount) {
-          this.submitValid = true
-          console.log("true")
+        this.submitValid = true
+        console.log("true")
       } else {
         this.submitValid = false
       }
     },
     metamaskAddress() {
       if (this.keplrAddress && this.metamaskAddress && this.amount) {
-          this.submitValid = true
-          console.log("true")
+        this.submitValid = true
+        console.log("true")
       } else {
         this.submitValid = false
       }
     },
     amount() {
       if (this.keplrAddress && this.metamaskAddress && this.amount) {
-          this.submitValid = true
-          console.log("true")
+        this.submitValid = true
+        console.log("true")
       } else {
         this.submitValid = false
       }
@@ -110,11 +134,35 @@ export default {
       this.$router.push('/mtk')
     },
     async submit() {
+      this.bridging = true
+      this.astep = false
+      this.bstep = false
+      this.cstep = false
       this.amount = String(this.amount)
       if (this.metamaskAddress.length !== 42) {
-        alert('please insert a proper address')
+        this.$fire({
+          title: "Please input a proper evmos address",
+          type: "error",
+        })
+        this.bridging = false
+        this.astep = false
+        this.bstep = false
+        this.cstep = false
         return
       }
+      if (this.keplrAddress.length !== 43) {
+        this.$fire({
+          title: "Please insert a proper address",
+          type: "error",
+        })
+        this.bridging = false
+        this.astep = false
+        this.bstep = false
+        this.cstep = false
+        return
+      }
+      this.bridging = true
+      this.astep = true
       await this.transferToBridgeWallet()
       if (this.txHash !== '') {
         await this.transferKeplrToMetamask()
@@ -225,11 +273,18 @@ export default {
           'auto',
           memo,
         )
-        console.log('Transaction Response', {
-          tx: deliverTxResponse,
-        })
         this.txHash = deliverTxResponse.transactionHash
+        this.astep = false
+        this.bstep = true
       } catch (e) {
+        this.$fire({
+          title: "Transaction rejected. please try again",
+          type: "error",
+        })
+        this.bridging = false
+        this.astep = false
+        this.bstep = false
+        this.cstep = false
         console.warn('Error sending tokens', [e, address])
       }
     },
@@ -250,14 +305,53 @@ export default {
           result = response.status
         ))
         if (result == 200) {
-          alert('osmo successfully bridged over to metamask 🦊')
-          this.$router.push('/import')
+          this.$fire({
+            title: "osmo successfully bridged over to metamask 🦊",
+            text: "import token to metamask",
+            type: "success",
+          }).then(r => {
+            this.importToken()
+            this.bridging = false
+            this.astep = false
+            this.bstep = false
+            this.cstep = false
+          })
+          this.$router.push('/explorer')
         }
         this.txHash = ''
+        this.astep = false
+        this.bstep = false
+        // this.cstep = true
       } catch (error) {
         console.error(error)
         this.$emit('error', { error })
       }
+    },
+    async importToken() {
+      try {
+        // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+        const wasAdded = await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20', // Initially only supports ERC20, but eventually more!
+            options: {
+              address: file.tokenAddress, // The address that the token is at.
+              symbol: 'OSMO', // A ticker symbol or shorthand, up to 5 chars.
+              decimals: 18, // The number of decimals in the token
+            },
+          },
+        })
+        console.log(wasAdded)
+
+        if (wasAdded) {
+          console.log('Thanks for your interest!')
+        } else {
+          console.log('Your loss!')
+        }
+      } catch (error) {
+        console.log(error)
+      }
+
     },
     async connectKeplr() {
       if (!window.keplr) {
@@ -299,7 +393,10 @@ export default {
       } catch (err) {
         console.log(err.code)
         if (err.code == 4001) {
-          alert('you rejected the transaction 🙈')
+          this.$fire({
+            title: "you rejected the transaction 🙈",
+            type: "warning",
+          })
           return
         }
       }
@@ -316,5 +413,4 @@ export default {
 .space {
   margin: 0 60px;
 }
-
 </style>

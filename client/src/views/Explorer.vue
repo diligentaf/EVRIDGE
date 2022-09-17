@@ -23,8 +23,6 @@
 </template>
 
 <script>
-// eslint-disable-next-line vue/no-unused-vars
-
 import axios from 'axios'
 import { loadingStates } from '../mixins/loading-state'
 
