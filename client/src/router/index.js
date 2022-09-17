@@ -5,8 +5,10 @@ import MTK from '../views/MetamaskToKeplr.vue'
 import Scan from '../views/Scan.vue'
 import Explorer from '../views/Explorer.vue'
 import Import from '../views/Import.vue'
+import VueSimpleAlert from "vue-simple-alert"
 
 Vue.use(VueRouter)
+Vue.use(VueSimpleAlert)
 
 const routes = [
   {
