@@ -6,7 +6,7 @@
         'disable-items-per-page': true,
       }">
         <template v-slot:top>
-          <v-text-field v-model="search" label="Search by Address, Currency, and TxHash" class="mx-4"></v-text-field>
+          <v-text-field v-model="search" label="🔍 Search by Address, Currency, and TxHash" class="mx-4"></v-text-field>
         </template>
         <template v-slot:item.action="{ item }">
           <v-btn @click="openEvmosScan(item.metamaskExplorer)">🦊</v-btn> &ensp;
