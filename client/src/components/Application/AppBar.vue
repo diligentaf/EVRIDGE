@@ -25,8 +25,8 @@
       <v-btn
         @click="changePage" 
       >
-        Evridge Scan
-        <v-icon>mdi-account-search-outline</v-icon>
+        <v-icon>mdi-account-search-outline</v-icon>&ensp;&ensp;
+        Evridge&ensp;Scan 
       </v-btn>
     </v-app-bar>
   </div>
