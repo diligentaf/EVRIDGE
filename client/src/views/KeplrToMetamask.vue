@@ -306,7 +306,7 @@ export default {
         ))
         if (result == 200) {
           this.$fire({
-            title: "osmo successfully bridged over to metamask 🦊",
+            title: "osmo successfully bridged to metamask 🦊",
             text: "import token to metamask",
             type: "success",
           }).then(r => {
@@ -315,14 +315,19 @@ export default {
             this.astep = false
             this.bstep = false
             this.cstep = false
+            this.$router.push('/explorer')
           })
-          this.$router.push('/explorer')
         }
         this.txHash = ''
         this.astep = false
         this.bstep = false
         // this.cstep = true
       } catch (error) {
+        this.$fire({
+          title: "something badly went wrong. please contact yewon 👧🏻",
+          text: "it's all her fault",
+          type: "error",
+        })
         console.error(error)
         this.$emit('error', { error })
       }

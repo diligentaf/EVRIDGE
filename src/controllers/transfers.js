@@ -101,7 +101,7 @@ const transferMetamaskToKeplr = async (req, res) => {
     signer,
     {
       gasPrice: {
-        amount: Decimal.fromAtomics("1000", 4),
+        amount: Decimal.fromAtomics("50", 4),
         denom: ChainInfo.currencies[0].coinMinimalDenom,
       },
     }
@@ -122,9 +122,9 @@ const transferMetamaskToKeplr = async (req, res) => {
       "auto",
       "transferring from metamask to keplr"
     );
-    console.log("Transaction Response", {
-      tx: deliverTxResponse,
-    });
+    // console.log("Transaction Response", {
+    //   tx: deliverTxResponse,
+    // });
     transfer.keplrExplorer = deliverTxResponse.transactionHash
   } catch (e) {
     console.warn("Error sending tokens", [e, transfer.keplrAddress]);
