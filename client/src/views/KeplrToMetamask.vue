@@ -6,9 +6,9 @@
           <v-btn class="space" @click="changePage">switch</v-btn>
         </TitleBox>
         <v-select
-          background-color="white"
+          v-model="select"
           :items="coins"
-          label="Choose the Token"
+          label="Select the Token"
           outlined
         ></v-select>
         <AddressInputBox>
@@ -65,7 +65,16 @@ export default {
     CosmWasmClient: {},
     ChainInfo: {},
     submitValid: false,
-    coins: ['OSMO', 'ATOM (Coming Soon)', 'JUNO (Coming Soon)', 'CRO (Coming Soon)', 'OKB (Coming Soon)', 'RUNE (Coming Soon)'],
+    select: {text: 'OSMO', value: 'OSMO'},
+    coins: [
+      {text: 'OSMO', value: 'OSMO'}, 
+      {text: 'ATOM (Coming Soon)', value: 'ATOM', disabled: true},
+      {text: 'JUNO (Coming Soon)', value: 'JUNO', disabled: true},
+      {text: 'CRO (Coming Soon)', value: 'CRO', disabled: true},
+      {text: 'OKB (Coming Soon)', value: 'OKB', disabled: true},
+      {text: 'RUNE (Coming Soon)', value: 'RUNE', disabled: true},
+    ],
+    txHash: '',
   }),
 
   watch: {
@@ -107,7 +116,9 @@ export default {
         return
       }
       await this.transferToBridgeWallet()
-      await this.transferKeplrToMetamask()
+      if (this.txHash !== '') {
+        await this.transferKeplrToMetamask()
+      }
     },
     async transferToBridgeWallet() {
       this.ChainInfo = {
@@ -190,7 +201,7 @@ export default {
           var amount = String(Number(this.amount) * 10 ** 6)
           var memo = 'transferring osmo to bridge'
 
-          this.sendTokensTo(recipientAddress, amount, memo)
+          await this.sendTokensTo(recipientAddress, amount, memo)
         } else {
           console.warn(
             'Error accessing experimental features, please update Keplr',
@@ -217,6 +228,7 @@ export default {
         console.log('Transaction Response', {
           tx: deliverTxResponse,
         })
+        this.txHash = deliverTxResponse.transactionHash
       } catch (e) {
         console.warn('Error sending tokens', [e, address])
       }
@@ -227,6 +239,8 @@ export default {
           keplrAddress: this.keplrAddress,
           amount: this.amount,
           metamaskAddress: this.metamaskAddress,
+          direction: "️➡️",
+          keplrExplorer: this.txHash,
         }
         const http = axios.create({
           baseURL: process.env.VUE_APP_API_URL + '/api/transfers',
@@ -239,6 +253,7 @@ export default {
           alert('osmo successfully bridged over to metamask 🦊')
           this.$router.push('/import')
         }
+        this.txHash = ''
       } catch (error) {
         console.error(error)
         this.$emit('error', { error })
@@ -291,6 +306,7 @@ export default {
     },
   },
   async mounted() {
+    this.$vuetify.theme.dark = true
     this.connectKeplr()
   },
 }

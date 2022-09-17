@@ -14,6 +14,7 @@ module.exports = {
     semi: ['error', 'never'],
     // 'prettier/prettier': 'error',
     'prettier/prettier': 0,
+    "no-unused-vars": "off",
   },
   overrides: [
     {

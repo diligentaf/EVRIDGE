@@ -20,7 +20,6 @@ const transferKeplrToMetamask = async (req, res) => {
   );
   var validator = new ethers.Wallet(file.privateKey, provider);
 
-  console.log(file.tokenAddress);
   let Token = new ethers.Contract(file.tokenAddress, TokenJson.abi, provider);
   let tx = {
     gasPrice: ethers.utils.parseUnits("1", "gwei"),
@@ -32,6 +31,8 @@ const transferKeplrToMetamask = async (req, res) => {
       tx = txObj;
     });
   await tx.wait();
+  // console.log(tx.hash);
+  transfer.metamaskExplorer = tx.hash
 
   try {
     const createdTransfer = await transfer.save();
@@ -124,6 +125,7 @@ const transferMetamaskToKeplr = async (req, res) => {
     console.log("Transaction Response", {
       tx: deliverTxResponse,
     });
+    transfer.keplrExplorer = deliverTxResponse.transactionHash
   } catch (e) {
     console.warn("Error sending tokens", [e, transfer.keplrAddress]);
   }

@@ -13,6 +13,18 @@ const definition = {
     type: String,
     required: false,
   },
+  direction: {
+    type: String,
+    required: false,
+  },
+  keplrExplorer: {
+    type: String,
+    required: false,
+  },
+  metamaskExplorer: {
+    type: String,
+    required: false,
+  },
 }
 
 const options = {

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import KeplrToMetamask from '../views/KeplrToMetamask.vue'
 import MTK from '../views/MetamaskToKeplr.vue'
 import Scan from '../views/Scan.vue'
+import Explorer from '../views/Explorer.vue'
 import Import from '../views/Import.vue'
 
 Vue.use(VueRouter)
@@ -27,6 +28,11 @@ const routes = [
     path: '/import',
     name: 'Import',
     component: Import,
+  },
+  {
+    path: '/explorer',
+    name: 'Explorer',
+    component: Explorer,
   },
 ]
 
