@@ -5,6 +5,12 @@
         <TitleBox class="justify-center">🦊Metamask ➡️ 🪐Keplr
           <v-btn class="space" @click="changePage">switch</v-btn>
         </TitleBox>
+        <v-select
+          background-color="white"
+          :items="coins"
+          label="Choose the Token"
+          outlined
+        ></v-select>
         <AddressInputBox>
           <AddressInput v-model="metamaskAddress" placeholder="Your Metamask Address" />
         </AddressInputBox>
@@ -64,6 +70,7 @@ export default {
     providekr: {},
     signer: {},
     publicMetamaskAddress: '',
+    coins: ['OSMO', 'ATOM (Coming Soon)', 'JUNO (Coming Soon)', 'CRO (Coming Soon)', 'OKB (Coming Soon)', 'RUNE (Coming Soon)'],
   }),
 
   methods: {

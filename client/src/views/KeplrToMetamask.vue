@@ -5,6 +5,12 @@
         <TitleBox class="justify-center">🪐Keplr ➡️ 🦊Metamask
           <v-btn class="space" @click="changePage">switch</v-btn>
         </TitleBox>
+        <v-select
+          background-color="white"
+          :items="coins"
+          label="Choose the Token"
+          outlined
+        ></v-select>
         <AddressInputBox>
           <AddressInput v-model="keplrAddress" placeholder="Your Keplr Address" />
         </AddressInputBox>
@@ -59,6 +65,7 @@ export default {
     CosmWasmClient: {},
     ChainInfo: {},
     submitValid: false,
+    coins: ['OSMO', 'ATOM (Coming Soon)', 'JUNO (Coming Soon)', 'CRO (Coming Soon)', 'OKB (Coming Soon)', 'RUNE (Coming Soon)'],
   }),
 
   watch: {
