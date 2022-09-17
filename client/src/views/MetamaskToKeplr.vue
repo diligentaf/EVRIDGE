@@ -25,7 +25,7 @@
           <v-card>
             <v-card-title class="text-h5">
               Don't Panic 🟢 <br />
-              Bridging in Progress ..
+              Transaction in Pocess ..
             </v-card-title>
             <v-card-text v-if="astep">➡️ transferring your osmo<v-progress-circular indeterminate color="green">
               </v-progress-circular>
