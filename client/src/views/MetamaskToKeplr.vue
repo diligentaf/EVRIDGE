@@ -27,15 +27,15 @@
               Don't Panic 🟢 <br />
               Transaction in Process ..
             </v-card-title>
-            <v-card-text v-if="astep">➡️ transferring your osmo<v-progress-circular indeterminate color="green">
+            <v-card-text v-if="astep">➡️ transferring from evmos<v-progress-circular indeterminate color="green">
               </v-progress-circular>
             </v-card-text>
-            <v-card-text v-else>transferring your osmo ✅</v-card-text>
-            <v-card-text v-if="bstep">➡️ transferring to keplr <v-progress-circular indeterminate color="green">
+            <v-card-text v-else>transferring from evmos ✅</v-card-text>
+            <v-card-text v-if="bstep">➡️ transferring to osmosis <v-progress-circular indeterminate color="green">
               </v-progress-circular>
             </v-card-text>
             <v-card-text v-else-if="bstep == false && astep == true"></v-card-text>
-            <v-card-text v-else> transferring to keplr ✅</v-card-text>
+            <v-card-text v-else> transferring to osmosis ✅</v-card-text>
             <v-card-text v-if="cstep">➡️ Done ✅</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>

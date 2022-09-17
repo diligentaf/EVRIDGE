@@ -29,15 +29,15 @@
               Don't Panic 🟢 <br />
               Transaction in Process ..
             </v-card-title>
-            <v-card-text v-if="astep">➡️ transferring your osmo<v-progress-circular indeterminate
+            <v-card-text v-if="astep">➡️ transferring from osmosis<v-progress-circular indeterminate
                 color="green"></v-progress-circular>
             </v-card-text>
-            <v-card-text v-else>transferring your osmo ✅</v-card-text>
-            <v-card-text v-if="bstep">➡️ transferring to metamask <v-progress-circular indeterminate color="green">
+            <v-card-text v-else>transferring from osmosis ✅</v-card-text>
+            <v-card-text v-if="bstep">➡️ transferring to evmos <v-progress-circular indeterminate color="green">
               </v-progress-circular>
             </v-card-text>
             <v-card-text v-else-if="bstep == false && astep == true"></v-card-text>
-            <v-card-text v-else> transferring to metamask ✅</v-card-text>
+            <v-card-text v-else> transferring to evmos ✅</v-card-text>
             <v-card-text v-if="cstep">➡️ Done ✅</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -142,7 +142,7 @@ export default {
       this.amount = String(this.amount)
       if (this.metamaskAddress.length !== 42) {
         this.$fire({
-          title: "Please input a proper evmos address",
+          title: "Please input a proper address",
           type: "error",
         })
         this.bridging = false
@@ -308,7 +308,7 @@ export default {
         if (result == 200) {
           this.$fire({
             title: "OSMO successfully transferred to 🅴🆅🅼🅾🆂",
-            text: "import osmo token on metamask 🦊",
+            text: "Let's import osmo token on metamask 🦊",
             type: "success",
           }).then(r => {
             this.txHash = ''
